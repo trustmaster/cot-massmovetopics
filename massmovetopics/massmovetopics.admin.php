@@ -21,18 +21,18 @@ require_once cot_incfile('forums', 'module');
 
 $out['subtitle'] = "Mass-move topics in forums";
 
-$sourceid = cot_import('sourceid', 'P', 'INT');
-$targetid = cot_import('targetid', 'P', 'INT');
+$sourceid = cot_import('sourceid', 'P', 'TXT');
+$targetid = cot_import('targetid', 'P', 'TXT');
 
 $t = new XTemplate(cot_tplfile('massmovetopics', 'plug'));
 
 if ($a == 'move')
 {
-	$sql = $db->update($db_forum_topics, array('ft_cat' => $targetid), "ft_cat=$sourceid");
-	$sql = $db->update($db_forum_posts, array('fp_cat' => $targetid), "fp_cat=$sourceid");
+	$sql = $db->update($db_forum_topics, array('ft_cat' => $targetid), "ft_cat=?", array($sourceid));
+	$sql = $db->update($db_forum_posts, array('fp_cat' => $targetid), "fp_cat=?", array($sourceid));
 	
-	cot_forums_count($sourceid);
-	cot_forums_count($targetid);
+	cot_forums_sync($sourceid);
+	cot_forums_sync($targetid);
 	$t->parse('MAIN.MASSMOVETOPICS_MOVE_DONE');
 }
 
